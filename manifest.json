@@ -1,0 +1,15 @@
+{
+    "name": "BJJ APP",
+    "short_name": "Jiu Jitsu APP",
+    "start_url": "/",
+    "display": "standalone", 
+    "background_color": "#ffffff",
+    "theme_color": "#000000",
+    "icons": [
+     {
+      "src": "./assets/imagens/site-admin/splash.png",
+      "sizes": "300x300",
+      "type": "image/png"
+     }
+    ]
+}

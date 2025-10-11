@@ -1,0 +1,58 @@
+.container-img-treino{
+    width: 100% !important;
+    height: 200px;
+}
+.container-img-treino img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+._container-finalizacao-treino{
+    border-top: 1px solid #ccccccbe;
+}
+
+._video-finalizacao_insta{
+    width: 40%;
+    height: 400px;
+    margin-top: 20px !important;
+}
+
+._video-finalizacao{
+    width: auto;
+    height: 60%;
+    margin-top: 20px !important;
+}
+@media(max-width:992px){
+    ._video-finalizacao{
+        width: 100%;
+        height: auto;
+    }
+
+    ._video-finalizacao_insta{
+        width: 100%;
+        height: 350px;
+    }
+}
+
+@media(min-width:1500px){
+    .container-img-treino{
+        width: 95%;
+        height: 280px;
+    }
+
+    ._container-finalizacao-treino{
+        border-top: none;
+    }
+
+    ._video-finalizacao{
+        width: 80% !important; 
+        height: auto;
+    }
+
+    ._video-finalizacao_insta{
+        width: 50% !important; 
+        height: 250px;
+    }
+}

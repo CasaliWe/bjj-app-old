@@ -1,0 +1,20 @@
+.container-preview-imagem-perfil{
+    height: 80px;
+    width: 80px;
+    border-radius: 80px;
+    overflow: hidden;
+}
+.container-preview-imagem-perfil img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+@media(max-width:992px){
+    .container-preview-imagem-perfil{
+        height: 210px;
+        width: 210px;
+        border-radius: 210px;
+    }
+}

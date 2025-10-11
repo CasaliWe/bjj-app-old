@@ -1,0 +1,27 @@
+._container-img-perfil{
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    margin-right: 30px;
+    overflow: hidden;   
+}
+._container-img-perfil img{
+    height: 100%;
+    width: 100%;
+    object-position: center;
+    object-fit: cover;
+}
+
+@media(max-width:992px){
+    ._container-img-perfil{
+        height: 60px;
+        width: 60px;
+        border-radius: 50%;
+        margin-right: 20px;  
+    }
+
+    ._infos-users{
+        font-size: 14px;
+    }
+}

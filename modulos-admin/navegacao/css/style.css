@@ -1,0 +1,114 @@
+#navegacao-desktop{
+    width: 20%;
+}
+
+#container-logo-rounded{
+    width: 60px;
+    height: 60px;
+    border-radius: 80px;
+    overflow: hidden;
+}
+#container-logo-rounded img{
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+}
+
+@media(max-width:992px){
+    #container-logo-rounded{
+        width: 50px;
+        height: 50px;
+        border-radius: 50px;
+    }
+}
+
+.btn-toggler-mobile{
+    font-size: 35px;
+}
+.nome-faixa-mobile{
+    font-size: 12px;
+}
+
+.link-nav-desktop{
+    width: 100%;
+    padding-left: 12%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 9px;
+    color: rgba(0, 0, 0, 0.767);
+    font-weight: 600;
+}
+.link-nav-desktop:hover{
+    background-color: rgba(128, 128, 128, 0.443);
+    color: black;
+}
+@media(max-width:992px){
+    .link-nav-desktop{
+        padding-top: 10px;
+        padding-bottom: 10px;
+        font-size: 12px;
+    }
+}
+
+.active-link-desktop{
+     background-color: gray !important;
+     color: white !important;
+}
+
+
+@media(min-width:1500px){
+    .link-nav-desktop{
+        padding-top: 20px;
+        padding-bottom: 20px;
+        font-size: 12px;
+    }
+}
+
+
+
+#header-navegacao-mobile{
+    display: none !important;
+}
+#content-navegacao-mobile{
+    display: none !important;
+}
+
+
+@media(max-width:992px){
+    #navegacao-desktop{
+        display: none !important;
+    }
+
+    #header-navegacao-mobile{
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        padding: 25px 40px;
+    }
+    #header-navegacao-mobile #logo-nav-mobile{
+        height: 50px;
+    }
+
+
+    #content-navegacao-mobile{
+        position: fixed;
+        height: 0%;
+        width: 100%;
+        z-index: 1000 !important;
+        background-color: #DFDFDF;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden !important;
+    }
+    #content-navegacao-mobile #btn-close{
+        position: fixed;
+        top: 4%;
+        right: 9%;
+        background-color: transparent;
+        border: none; 
+        cursor: pointer;
+        display: none;
+    }
+}
