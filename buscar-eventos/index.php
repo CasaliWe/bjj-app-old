@@ -1,17 +1,21 @@
 <?php
 
-// CONFIGURAÇÃO BASE URL
-// Coloque aqui a URL base do seu servidor
 $baseUrl = 'http://localhost/bjj-app-old/buscar-eventos/';
+$souCompetidorBaseUrl = 'https://soucompetidor.com.br/pt-br/eventos/todos-os-eventos/novos/?periodo_inicial=&periodo_final=&eventos=&modalidade=1&pais=1&estado=';
 
-// CONFIGURAÇÃO DOS ESTADOS
-// Adicione aqui os estados que você quer buscar
-// Formato: 'nome-da-pasta' => numero_do_estado_na_url
 $estados = [
     'rio-grande-do-sul' => 23,
-    'sao-paulo' => 24,
+    'santa-catarina' => 24,
+    'sao-paulo' => 26,
     'rio-de-janeiro' => 19,
-    // Adicione mais estados aqui conforme necessário
+    'parana' => 18,
+    'amazonas' => 3,
+    'bahia' => 5,
+    'ceara' => 6,
+    'distrito-federal' => 7,
+    'goias' => 9,
+    'minas-gerais' => 11,
+    'pernambuco' => 16,
 ];
 
 function baixarImagem($url, $eventoId, $pastaEstado, $baseUrl) {
@@ -71,15 +75,11 @@ function limparImagensEstado($pastaEstado) {
                 unlink($arquivo);
             }
         }
-        // echo "🗑️ Imagens antigas do estado $pastaEstado foram removidas.\n";
     }
 }
 
-function extrairEventosEstado($nomeEstado, $numeroEstado, $baseUrl) {
-    // URL específica para eventos de Jiu-Jitsu do estado
-    $url = "https://soucompetidor.com.br/pt-br/eventos/todos-os-eventos/novos/?periodo_inicial=&periodo_final=&eventos=&modalidade=1&pais=1&estado=" . $numeroEstado;
-    
-    // echo "🔍 Buscando eventos para: $nomeEstado (ID: $numeroEstado)\n";
+function extrairEventosEstado($nomeEstado, $numeroEstado, $baseUrl, $souCompetidorBaseUrl) {
+    $url = $souCompetidorBaseUrl . $numeroEstado;
     
     $html = file_get_contents($url);
     
@@ -121,7 +121,14 @@ function extrairEventosEstado($nomeEstado, $numeroEstado, $baseUrl) {
             
             $evento = [];
             
-            // 1. IMAGEM
+            // 1. LINK DO EVENTO
+            $linkEvento = $link;
+            if (strpos($linkEvento, 'http') !== 0) {
+                $linkEvento = 'https://soucompetidor.com.br' . $linkEvento;
+            }
+            $evento['link'] = $linkEvento;
+            
+            // 2. IMAGEM
             $imagens = $xpath->query(".//img", $container);
             if ($imagens->length > 0) {
                 /** @var DOMElement $img */
@@ -142,7 +149,7 @@ function extrairEventosEstado($nomeEstado, $numeroEstado, $baseUrl) {
                     $evento['imagem_status'] = 'erro_download';
                 }
                 
-                // 2. NOME DO EVENTO (extrair do alt da imagem)
+                // 3. NOME DO EVENTO (extrair do alt da imagem)
                 $altText = $img->getAttribute('alt');
                 if (preg_match('/P\d+-(.*?)$/', $altText, $matches)) {
                     $evento['nome'] = trim($matches[1]);
@@ -162,12 +169,12 @@ function extrairEventosEstado($nomeEstado, $numeroEstado, $baseUrl) {
                 $textoCompleto = trim($container->textContent);
             }
             
-            // 3. LOCAL (Cidade - Estado)
+            // 4. LOCAL (Cidade - Estado)
             if (preg_match('/([A-Z\s]+)\s*-\s*RS/', $textoCompleto, $matches)) {
                 $evento['local'] = trim($matches[1]) . ' - RS';
             }
             
-            // 4. DATA
+            // 5. DATA
             // Primeiro tentar período (data1 - data2)
             if (preg_match('/(\d{2}\/\d{2}\/\d{4})\s*-\s*(\d{2}\/\d{2}\/\d{4})/', $textoCompleto, $matches)) {
                 $evento['data'] = $matches[1] . ' - ' . $matches[2];
@@ -196,7 +203,7 @@ foreach ($estados as $nomeEstado => $numeroEstado) {
     limparImagensEstado($nomeEstado);
     
     // Extrair eventos do estado
-    $eventosEstado = extrairEventosEstado($nomeEstado, $numeroEstado, $baseUrl);
+    $eventosEstado = extrairEventosEstado($nomeEstado, $numeroEstado, $baseUrl, $souCompetidorBaseUrl);
     
     if (isset($eventosEstado['erro'])) {
         $todosEventos[$nomeEstado] = [
