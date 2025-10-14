@@ -1,7 +1,7 @@
 <?php
 
 // Chave da API do YouTube
-$apiKey = 'AIzaSyC5Api07dVv9OdKjSkA_nQaeuDORl8L6E0';
+$apiKey = '';
 
 // Termos de busca
 $queries = ["finalizações jiu jitsu", "ufc", "ibjjf"];
