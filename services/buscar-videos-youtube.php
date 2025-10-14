@@ -1,30 +1,26 @@
 <?php
-// importando o envio de email
-require __DIR__ . '/../helpers/enviar-email.php';
-
-use Repositories\VideoRepository;
 
 // Chave da API do YouTube
-$apiKey = $_ENV['KEY_YOUTUBE_API'];
+$apiKey = 'AIzaSyC5Api07dVv9OdKjSkA_nQaeuDORl8L6E0';
 
 // Termos de busca
-$queries = ["finalizações jiu jitsu", "podcasts jiu jitsu"];
+$queries = ["finalizações jiu jitsu", "ufc", "ibjjf"];
 
 // Data de início
 $dataAtual = new DateTime();
 
-// Subtrair 7 dias para obter a data de uma semana atrás
-$dataAtual->sub(new DateInterval('P30D'));
+// Subtrair 14 dias para obter a data de duas semanas atrás
+$dataAtual->sub(new DateInterval('P14D'));
 
 // Formatar a data para o formato ISO 8601
 $publishedAfter = $dataAtual->format('Y-m-d\TH:i:s\Z');
 
 // Número máximo de resultados por termo
-$maxResults = 40;
+$maxResults = 20;
 
 // Função para fazer requisições à API do YouTube
 function fetchVideos($query, $apiKey, $publishedAfter, $maxResults) {
-    $url = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=" . urlencode($query) . "&type=video&publishedAfter=" . $publishedAfter . "&maxResults=" . $maxResults . "&relevanceLanguage=pt&key=" . $apiKey;
+    $url = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=" . urlencode($query) . "&type=video&publishedAfter=" . $publishedAfter . "&maxResults=" . $maxResults . "&relevanceLanguage=pt&regionCode=BR&videoDuration=medium&key=" . $apiKey;
     
     $curl = curl_init();
     curl_setopt_array($curl, [
@@ -53,33 +49,30 @@ $videos = [];
 // Verifica se houve resultados
 if (!empty($allVideos)) {
 
-    // remover todos os videos do banco de dados
-    VideoRepository::resetVideos();
-
     foreach ($allVideos as $item) {
         // Obtém detalhes do vídeo
         $videoId = $item['id']['videoId'];
         $title = $item['snippet']['title'];
+        
+        // Filtrar para excluir reels/shorts (geralmente têm títulos ou descrições específicas)
+        if (stripos($title, '#shorts') !== false || 
+            stripos($title, 'reels') !== false || 
+            stripos($title, 'short') !== false) {
+            continue;
+        }
 
         $videos[] = [
-            'iframe' => 'https://www.youtube.com/embed/'.$videoId,
-            'titulo' => $title
+            'titulo' => $title,
+            'url' => 'https://www.youtube.com/embed/' . $videoId
         ];
     }
 
-    // salvar vídeos no banco de dados
-    foreach ($videos as $video) {
-        $res = VideoRepository::createVideo($video);
-        if(!$res){
-            enviarEmail('Erro ao atualizar vídeos no dia: '. date('d-m-Y'), 'Ocorreu um erro na tentativa de atualizar os vídeos no banco de dados.', null, null);
-            exit;
-        }
-    }
-
-    // RESPOSTA
-    enviarEmail('Vídeos atualizados no dia: '. date('d-m-Y'), 'Os vídeos foram atualizados com sucesso no banco de dados.', null, null);
+    // EXIBIR JSON
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($videos, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
 } else {
-    enviarEmail('Erro ao atualizar vídeos no dia: '. date('d-m-Y'), 'Nenhum vídeo foi encontrado na tentativa de atualizar os vídeos no banco de dados.', null, null);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['erro' => 'Nenhum vídeo foi encontrado nos termos de busca especificados.'], JSON_UNESCAPED_UNICODE);
 }
 ?>
