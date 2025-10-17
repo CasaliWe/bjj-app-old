@@ -22,10 +22,10 @@ $capsule->addConnection([
 // Segunda conexão (banco NEW - MySQL)
 $capsule->addConnection([
     'driver'    => 'mysql',
-    'host'      => '',
-    'database'  => '',
-    'username'  => '',
-    'password'  => '',
+    'host'      => '77.37.69.27',
+    'database'  => 'bjjacademybanco',
+    'username'  => 'bjjacademyuser',
+    'password'  => 'W1e2s3l4e5i6@',
     'charset'   => 'utf8mb4',
     'collation' => 'utf8mb4_unicode_ci',
     'prefix'    => '',
@@ -89,14 +89,64 @@ class TreinoImagem extends Model {
 }
 
 
-// buscando dados do banco OLD
-$treinosOld = TreinoOld::all();
+// // buscando dados do banco OLD
+// $treinosOld = TreinoOld::where('user_identificador', 'e08cbc3c5c99f919632965758cf384d4')->get();
 
-// buscando dados do banco NEW
-$treinosNew = TreinoNew::with('imagens')->get();
+// // migrar dados do banco OLD para o banco NEW seguindo exatamente o formato do banco NEW, convertendo os dados conforme necessário do bando old para o banco new, sabendo que no banco old as imagens sao salvar na mesma tabela mas no banco new as imagens sao salvas em uma tabela separada com relacionamento de 1 para muitos
+// // outro detalhe é que o usuario id sempre será 60
+// foreach ($treinosOld as $treinoOld) {
+//     // mapeando os campos do banco old para o banco new usando create
+//     $treinoNew = TreinoNew::create([
+//         'usuario_id' => 60, // Definindo o usuario_id como 60
+//         'numero_aula' => (int)$treinoOld->aula_treino,
+//         'tipo' => mapearTipoTreino($treinoOld->tipo_treino), // Função para mapear o tipo de treino
+//         'dia_semana' => mapearDiaSemana($treinoOld->dia_treino), // Função para mapear o dia da semana
+//         'horario' => $treinoOld->hora_treino,
+//         'data' => $treinoOld->data_treino,
+//         'observacoes' => '',
+//         'is_publico' => 0 // Definindo como privado por padrão
+//     ]);
 
-// exibindo dados
-// echo "Dados do banco OLD:\n";
-// echo json_encode($treinosOld->first());
-echo "\n\nDados do banco NEW:\n";
-echo json_encode($treinosNew->first());
+//     // migrando imagens associadas
+//     if (is_array($treinoOld->img_treino)) {
+//         foreach ($treinoOld->img_treino as $img) {
+//             TreinoImagem::create([
+//                 'treino_id' => $treinoNew->id,
+//                 'url' => $img
+//             ]);
+//         }
+//     }
+// }
+
+// // Função para mapear o tipo de treino
+// function mapearTipoTreino($tipoOld) {
+//     $mapa = [
+//         'Jiu Jitsu' => 'gi',
+//         'No Gi' => 'nogi',
+//     ];
+//     return $mapa[$tipoOld] ?? 'gi';
+// }
+// // Função para mapear o dia da semana
+// function mapearDiaSemana($diaOld) {
+//     $mapa = [
+//         'Segunda Feira' => 'segunda',
+//         'Terça Feira' => 'terca',
+//         'Quarta Feira' => 'quarta',
+//         'Quinta Feira' => 'quinta',
+//         'Sexta Feira' => 'sexta',
+//         'Sábado' => 'sabado',
+//         'Domingo' => 'domingo',
+//     ];
+//     return $mapa[$diaOld] ?? 'segunda';
+// }
+
+
+
+// // deletando todos os treino onde o usuario_id é 60
+// TreinoNew::where('usuario_id', 60)->delete();
+
+
+
+
+$treinos = TreinoNew::where('usuario_id', 60)->get();
+echo json_encode($treinos, JSON_PRETTY_PRINT);
